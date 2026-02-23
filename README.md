@@ -118,21 +118,21 @@ Aplicación web moderna con arquitectura separada:
 ## 🔌 Endpoints API
 
 ### Autenticación
-- `POST /api/login` - Login y obtener token
-- `POST /api/logout` - Cerrar sesión
-- `GET /api/me` - Usuario autenticado
+- `POST /pista/login` - Login y obtener token
+- `POST /pista/logout` - Cerrar sesión
+- `GET /pista/me` - Usuario autenticado
 
 ### Dashboard
-- `GET /api/dashboard` - Datos completos
-- `GET /api/dashboard/stats` - Estadísticas
-- `GET /api/dashboard/recent-users` - Usuarios recientes
+- `GET /pista/dashboard` - Datos completos
+- `GET /pista/dashboard/stats` - Estadísticas
+- `GET /pista/dashboard/recent-users` - Usuarios recientes
 
 ### Usuarios (CRUD)
-- `GET /api/users` - Listar (paginado)
-- `POST /api/users` - Crear
-- `GET /api/users/{id}` - Ver uno
-- `PUT /api/users/{id}` - Actualizar
-- `DELETE /api/users/{id}` - Eliminar
+- `GET /pista/users` - Listar (paginado)
+- `POST /pista/users` - Crear
+- `GET /pista/users/{id}` - Ver uno
+- `PUT /pista/users/{id}` - Actualizar
+- `DELETE /pista/users/{id}` - Eliminar
 
 ## 🔒 Seguridad
 

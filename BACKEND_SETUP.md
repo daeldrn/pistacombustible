@@ -83,21 +83,21 @@ php artisan serve
 ## 📋 Endpoints Principales
 
 ### Autenticación
-- `POST /api/login` - Login (retorna token)
-- `POST /api/logout` - Logout
-- `GET /api/me` - Usuario autenticado
+- `POST /pista/login` - Login (retorna token)
+- `POST /pista/logout` - Logout
+- `GET /pista/me` - Usuario autenticado
 
 ### Dashboard
-- `GET /api/dashboard` - Datos completos
-- `GET /api/dashboard/stats` - Solo estadísticas
-- `GET /api/dashboard/recent-users` - Usuarios recientes
+- `GET /pista/dashboard` - Datos completos
+- `GET /pista/dashboard/stats` - Solo estadísticas
+- `GET /pista/dashboard/recent-users` - Usuarios recientes
 
 ### Usuarios
-- `GET /api/users` - Listar (paginado)
-- `POST /api/users` - Crear
-- `GET /api/users/{id}` - Ver uno
-- `PUT /api/users/{id}` - Actualizar
-- `DELETE /api/users/{id}` - Eliminar
+- `GET /pista/users` - Listar (paginado)
+- `POST /pista/users` - Crear
+- `GET /pista/users/{id}` - Ver uno
+- `PUT /pista/users/{id}` - Actualizar
+- `DELETE /pista/users/{id}` - Eliminar
 
 ---
 
@@ -146,14 +146,14 @@ Ya está configurado en `bootstrap/app.php`:
 
 ### Probar Login
 ```bash
-curl -X POST http://localhost:8000/api/login \
+curl -X POST http://localhost:8000/pista/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@example.com","password":"password"}'
 ```
 
 ### Probar Endpoint Protegido
 ```bash
-curl -X GET http://localhost:8000/api/dashboard/stats \
+curl -X GET http://localhost:8000/pista/dashboard/stats \
   -H "Authorization: Bearer TU_TOKEN_AQUI"
 ```
 

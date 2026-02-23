@@ -2,7 +2,7 @@
 
 ## Base URL
 ```
-http://localhost:8000/api
+http://localhost:8000/pista
 ```
 
 ## Autenticación
@@ -19,7 +19,7 @@ Authorization: Bearer {token}
 
 #### Login
 ```http
-POST /api/login
+POST /pista/login
 Content-Type: application/json
 
 {
@@ -45,7 +45,7 @@ Content-Type: application/json
 
 #### Logout
 ```http
-POST /api/logout
+POST /pista/logout
 Authorization: Bearer {token}
 ```
 
@@ -59,7 +59,7 @@ Authorization: Bearer {token}
 
 #### Obtener usuario autenticado
 ```http
-GET /api/me
+GET /pista/me
 Authorization: Bearer {token}
 ```
 
@@ -82,7 +82,7 @@ Authorization: Bearer {token}
 
 #### Obtener estadísticas
 ```http
-GET /api/dashboard/stats
+GET /pista/dashboard/stats
 Authorization: Bearer {token}
 ```
 
@@ -103,13 +103,13 @@ Authorization: Bearer {token}
 
 #### Obtener usuarios recientes
 ```http
-GET /api/dashboard/recent-users
+GET /pista/dashboard/recent-users
 Authorization: Bearer {token}
 ```
 
 #### Obtener todo el dashboard
 ```http
-GET /api/dashboard
+GET /pista/dashboard
 Authorization: Bearer {token}
 ```
 
@@ -119,7 +119,7 @@ Authorization: Bearer {token}
 
 #### Listar usuarios (con paginación)
 ```http
-GET /api/users?per_page=10&page=1
+GET /pista/users?per_page=10&page=1
 Authorization: Bearer {token}
 ```
 
@@ -149,7 +149,7 @@ Authorization: Bearer {token}
 
 #### Crear usuario
 ```http
-POST /api/users
+POST /pista/users
 Authorization: Bearer {token}
 Content-Type: application/json
 
@@ -178,13 +178,13 @@ Content-Type: application/json
 
 #### Obtener usuario específico
 ```http
-GET /api/users/{id}
+GET /pista/users/{id}
 Authorization: Bearer {token}
 ```
 
 #### Actualizar usuario
 ```http
-PUT /api/users/{id}
+PUT /pista/users/{id}
 Authorization: Bearer {token}
 Content-Type: application/json
 
@@ -201,7 +201,7 @@ Content-Type: application/json
 
 #### Eliminar usuario (soft delete)
 ```http
-DELETE /api/users/{id}
+DELETE /pista/users/{id}
 Authorization: Bearer {token}
 ```
 

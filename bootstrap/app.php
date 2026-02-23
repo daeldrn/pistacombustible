@@ -8,19 +8,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         api: __DIR__.'/../routes/api.php',
-        apiPrefix: 'api',
+        apiPrefix: 'pista',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Global middleware
-        $middleware->use([
-            \App\Http\Middleware\TrustProxies::class,
-            \Illuminate\Http\Middleware\HandleCors::class,
-            \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
-            \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
-            \App\Http\Middleware\TrimStrings::class,
-        ]);
 
         // API middleware group
         $middleware->api(prepend: [
@@ -39,10 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        // Manejo personalizado de excepciones para API
-        $exceptions->shouldRenderJsonWhen(function ($request, Throwable $e) {
-            return $request->is('api/*') || $request->expectsJson();
-        });
+   
     })
     ->withProviders([
         \App\Providers\AppServiceProvider::class,

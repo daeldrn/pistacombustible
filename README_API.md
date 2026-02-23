@@ -105,7 +105,7 @@ php artisan serve
 
 #### Login
 ```javascript
-const response = await fetch('http://localhost:8000/api/login', {
+const response = await fetch('http://localhost:8000/pista/login', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ const token = data.token; // Guardar este token
 
 #### Petición Autenticada
 ```javascript
-const response = await fetch('http://localhost:8000/api/dashboard/stats', {
+const response = await fetch('http://localhost:8000/pista/dashboard/stats', {
     headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/json'
@@ -149,16 +149,16 @@ console.log(data);
 
 | Método | Endpoint | Descripción | Auth |
 |--------|----------|-------------|------|
-| POST | `/api/login` | Login | No |
-| POST | `/api/logout` | Logout | Sí |
-| GET | `/api/me` | Usuario actual | Sí |
-| GET | `/api/dashboard` | Dashboard completo | Sí |
-| GET | `/api/dashboard/stats` | Estadísticas | Sí |
-| GET | `/api/users` | Listar usuarios | Sí |
-| POST | `/api/users` | Crear usuario | Sí |
-| GET | `/api/users/{id}` | Ver usuario | Sí |
-| PUT | `/api/users/{id}` | Actualizar usuario | Sí |
-| DELETE | `/api/users/{id}` | Eliminar usuario | Sí |
+| POST | `/pista/login` | Login | No |
+| POST | `/pista/logout` | Logout | Sí |
+| GET | `/pista/me` | Usuario actual | Sí |
+| GET | `/pista/dashboard` | Dashboard completo | Sí |
+| GET | `/pista/dashboard/stats` | Estadísticas | Sí |
+| GET | `/pista/users` | Listar usuarios | Sí |
+| POST | `/pista/users` | Crear usuario | Sí |
+| GET | `/pista/users/{id}` | Ver usuario | Sí |
+| PUT | `/pista/users/{id}` | Actualizar usuario | Sí |
+| DELETE | `/pista/users/{id}` | Eliminar usuario | Sí |
 
 ---
 
@@ -167,12 +167,12 @@ console.log(data);
 ### Con cURL
 ```bash
 # Login
-curl -X POST http://localhost:8000/api/login ^
+curl -X POST http://localhost:8000/pista/login ^
   -H "Content-Type: application/json" ^
   -d "{\"email\":\"admin@example.com\",\"password\":\"password\"}"
 
 # Dashboard (reemplaza TOKEN con el token obtenido)
-curl -X GET http://localhost:8000/api/dashboard/stats ^
+curl -X GET http://localhost:8000/pista/dashboard/stats ^
   -H "Authorization: Bearer TOKEN"
 ```
 
@@ -199,7 +199,7 @@ curl -X GET http://localhost:8000/api/dashboard/stats ^
 
 ### Opción 1: Mismo servidor
 - Frontend en `public/app/`
-- Backend API en `/api/*`
+- Backend API en `/pista/*`
 
 ### Opción 2: Servidores separados
 ```

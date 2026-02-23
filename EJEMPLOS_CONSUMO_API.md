@@ -18,7 +18,7 @@
 ```javascript
 async function login(email, password) {
     try {
-        const response = await fetch('http://localhost:8000/api/login', {
+        const response = await fetch('http://localhost:8000/pista/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ login('admin@example.com', 'password')
 async function getDashboardStats() {
     const token = localStorage.getItem('token');
 
-    const response = await fetch('http://localhost:8000/api/dashboard/stats', {
+    const response = await fetch('http://localhost:8000/pista/dashboard/stats', {
         headers: {
             'Authorization': `Bearer ${token}`,
             'Accept': 'application/json'
@@ -80,7 +80,7 @@ getDashboardStats()
 async function createUser(userData) {
     const token = localStorage.getItem('token');
 
-    const response = await fetch('http://localhost:8000/api/users', {
+    const response = await fetch('http://localhost:8000/pista/users', {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -122,7 +122,7 @@ $.ajaxSetup({
 ```javascript
 function login(email, password) {
     $.ajax({
-        url: 'http://localhost:8000/api/login',
+        url: 'http://localhost:8000/pista/login',
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ email, password }),
@@ -144,7 +144,7 @@ function login(email, password) {
 ```javascript
 function getUsers(page = 1) {
     $.ajax({
-        url: 'http://localhost:8000/api/users?page=' + page,
+        url: 'http://localhost:8000/pista/users?page=' + page,
         method: 'GET',
         success: function(data) {
             console.log('Usuarios:', data.data);
@@ -165,7 +165,7 @@ function getUsers(page = 1) {
 
 ### Servicio API (api.js)
 ```javascript
-const API_URL = 'http://localhost:8000/api';
+const API_URL = 'http://localhost:8000/pista';
 
 class ApiService {
     static getToken() {
@@ -343,7 +343,7 @@ function Dashboard() {
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:8000/api',
+    baseURL: 'http://localhost:8000/pista',
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -585,7 +585,7 @@ export class LoginComponent {
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:8000/api',
+    baseURL: 'http://localhost:8000/pista',
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -700,7 +700,7 @@ class API {
     }
 }
 
-const api = new API('http://localhost:8000/api');
+const api = new API('http://localhost:8000/pista');
 export default api;
 ```
 
@@ -777,7 +777,7 @@ class ApiClient {
 }
 
 // Uso
-$api = new ApiClient('http://localhost:8000/api');
+$api = new ApiClient('http://localhost:8000/pista');
 $loginData = $api->login('admin@example.com', 'password');
 
 if ($loginData['success']) {
@@ -828,7 +828,7 @@ try {
 ```javascript
 async function refreshToken() {
     const refreshToken = localStorage.getItem('refresh_token');
-    const response = await fetch('/api/refresh', {
+    const response = await fetch('/pista/refresh', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
