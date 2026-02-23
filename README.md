@@ -1,152 +1,212 @@
-# Mi Proyecto Laravel
+# 🚀 Mi Aplicación - API REST con Laravel
 
-Sistema de gestión de usuarios construido con Laravel 9, siguiendo las mejores prácticas y estándares de desarrollo.
+Sistema de gestión con backend API REST desarrollado en Laravel 12 y frontend estático con diseño Nifty.
 
-## 🚀 Características
+## 📋 Descripción
 
-- ✅ Autenticación de usuarios con rate limiting
-- ✅ CRUD completo de usuarios
-- ✅ Sistema de usuarios activos/inactivos
-- ✅ Soft deletes (eliminación lógica)
-- ✅ Autorización con Policies
-- ✅ Validación con Form Requests
-- ✅ Service Layer para lógica de negocio
-- ✅ Sistema de eventos y listeners
-- ✅ Logging completo
-- ✅ Tests automatizados
-- ✅ Seeders y factories
+Aplicación web moderna con arquitectura separada:
+- **Backend:** API REST con Laravel + Sanctum
+- **Frontend:** HTML/JS estático con plantilla Nifty
+- **Base de datos:** MySQL/PostgreSQL
+- **Autenticación:** Tokens Bearer (Sanctum)
 
-## 📋 Requisitos
+## ✨ Características
 
-- PHP >= 8.0.2
+- ✅ API REST completa con 11 endpoints
+- ✅ Autenticación segura con tokens
+- ✅ CRUD de usuarios con paginación
+- ✅ Dashboard con estadísticas
+- ✅ Rate limiting (60 req/min)
+- ✅ CORS configurado
+- ✅ Validaciones y autorización
+- ✅ Soft deletes
+- ✅ Frontend responsive con Nifty
+
+## 🛠️ Tecnologías
+
+- **Backend:** Laravel 12, PHP 8.2+
+- **Autenticación:** Laravel Sanctum
+- **Base de datos:** MySQL/PostgreSQL
+- **Frontend:** HTML5, JavaScript, jQuery
+- **CSS:** Bootstrap 3, Nifty Template
+- **Iconos:** Font Awesome
+
+## 📦 Instalación
+
+### Requisitos Previos
+
+- PHP 8.2 o superior
 - Composer
-- MySQL/MariaDB
-- Node.js y NPM (para assets)
+- MySQL o PostgreSQL
+- Servidor web (Apache/Nginx) o PHP built-in server
 
-## 🔧 Instalación
+### Pasos de Instalación
 
 1. **Clonar el repositorio**
-```bash
-git clone <tu-repositorio>
-cd mi-proyecto
-```
+   ```bash
+   git clone <url-del-repositorio>
+   cd mi-proyecto
+   ```
 
 2. **Instalar dependencias**
+   ```bash
+   composer install
+   ```
+
+3. **Configurar entorno**
+   ```bash
+   copy .env.example .env
+   php artisan key:generate
+   ```
+
+4. **Configurar base de datos**
+   
+   Editar `.env`:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=nombre_base_datos
+   DB_USERNAME=usuario
+   DB_PASSWORD=contraseña
+   ```
+
+5. **Ejecutar migraciones**
+   ```bash
+   php artisan migrate
+   ```
+
+6. **Crear usuario de prueba**
+   ```bash
+   php artisan tinker
+   ```
+   
+   En tinker:
+   ```php
+   \App\Models\User::create([
+       'name' => 'Admin',
+       'email' => 'admin@example.com',
+       'password' => bcrypt('password'),
+       'activo' => true
+   ]);
+   exit
+   ```
+
+7. **Iniciar servidor**
+   ```bash
+   php artisan serve
+   ```
+
+8. **Acceder a la aplicación**
+   ```
+   http://localhost:8000/app/login.html
+   ```
+   
+   **Credenciales:**
+   - Email: admin@example.com
+   - Password: password
+
+## 📚 Documentación
+
+- **[API Documentation](API_DOCUMENTATION.md)** - Documentación completa de endpoints
+- **[Backend Setup](BACKEND_SETUP.md)** - Guía de configuración del backend
+- **[Ejemplos de Consumo](EJEMPLOS_CONSUMO_API.md)** - Ejemplos en React, Vue, Angular, etc.
+- **[Comandos Útiles](comandos-utiles.md)** - Comandos para desarrollo
+- **[Checklist](CHECKLIST_VERIFICACION.md)** - Verificación de instalación
+- **[Testing API](test-api.http)** - Archivo para REST Client
+
+## 🔌 Endpoints API
+
+### Autenticación
+- `POST /api/login` - Login y obtener token
+- `POST /api/logout` - Cerrar sesión
+- `GET /api/me` - Usuario autenticado
+
+### Dashboard
+- `GET /api/dashboard` - Datos completos
+- `GET /api/dashboard/stats` - Estadísticas
+- `GET /api/dashboard/recent-users` - Usuarios recientes
+
+### Usuarios (CRUD)
+- `GET /api/users` - Listar (paginado)
+- `POST /api/users` - Crear
+- `GET /api/users/{id}` - Ver uno
+- `PUT /api/users/{id}` - Actualizar
+- `DELETE /api/users/{id}` - Eliminar
+
+## 🔒 Seguridad
+
+- ✅ Autenticación con tokens Bearer (Sanctum)
+- ✅ Rate limiting (5 intentos login, 60 req/min API)
+- ✅ Validación de inputs
+- ✅ Políticas de autorización
+- ✅ CORS configurado
+- ✅ Passwords hasheados (bcrypt)
+- ✅ Protección contra CSRF en rutas web
+
+## 🧪 Testing
+
 ```bash
-composer install
-npm install
-```
-
-3. **Configurar el archivo .env**
-```bash
-copy .env.example .env
-```
-
-Edita el archivo `.env` con tus credenciales de base de datos:
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=tu_base_de_datos
-DB_USERNAME=tu_usuario
-DB_PASSWORD=tu_contraseña
-```
-
-4. **Generar la clave de aplicación**
-```bash
-php artisan key:generate
-```
-
-5. **Ejecutar migraciones y seeders**
-```bash
-php artisan migrate --seed
-```
-
-6. **Compilar assets**
-```bash
-npm run dev
-```
-
-7. **Iniciar el servidor**
-```bash
-php artisan serve
-```
-
-La aplicación estará disponible en `http://localhost:8000`
-
-## 👤 Credenciales de Prueba
-
-Después de ejecutar los seeders, puedes usar estas credenciales:
-
-- **Administrador**: admin@example.com / password
-- **Usuario Test**: test@example.com / password
-- **Usuario Inactivo**: inactive@example.com / password (no puede iniciar sesión)
-
-## 🧪 Tests
-
-Ejecutar todos los tests:
-```bash
+# Ejecutar todos los tests
 php artisan test
-```
 
-Ejecutar tests con cobertura:
-```bash
+# Ejecutar tests específicos
+php artisan test --filter=AuthTest
+
+# Con coverage
 php artisan test --coverage
 ```
 
 ## 📁 Estructura del Proyecto
 
 ```
-app/
-├── Events/              # Eventos de la aplicación
-├── Http/
-│   ├── Controllers/     # Controladores
-│   ├── Middleware/      # Middleware personalizado
-│   └── Requests/        # Form Requests para validación
-├── Listeners/           # Listeners de eventos
-├── Models/              # Modelos Eloquent
-├── Policies/            # Policies de autorización
-└── Services/            # Capa de servicios (lógica de negocio)
-
-database/
-├── factories/           # Factories para testing
-├── migrations/          # Migraciones de base de datos
-└── seeders/             # Seeders para datos de prueba
-
-tests/
-├── Feature/             # Tests de integración
-└── Unit/                # Tests unitarios
+mi-proyecto/
+├── app/
+│   ├── Http/Controllers/Api/    # Controladores API
+│   ├── Services/                # Lógica de negocio
+│   ├── Models/                  # Modelos Eloquent
+│   └── Policies/                # Autorización
+├── public/app/                  # Frontend estático
+│   ├── login.html
+│   ├── dashboard.html
+│   └── users.html
+├── routes/
+│   ├── api.php                  # Rutas API
+│   └── web.php                  # Rutas web
+├── config/                      # Configuraciones
+└── database/                    # Migraciones y seeders
 ```
 
-## 🔐 Seguridad
+## 🚀 Deploy a Producción
 
-- Rate limiting en login (5 intentos por minuto)
-- Verificación de usuarios activos
-- Regeneración de sesión en login/logout
-- Protección CSRF
-- Contraseñas hasheadas con bcrypt
-- Soft deletes para auditoría
+### 1. Optimizar aplicación
+```bash
+composer install --optimize-autoloader --no-dev
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
 
-## 📚 Arquitectura
+### 2. Configurar .env
+```env
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://tudominio.com
+```
 
-### Service Layer
-La lógica de negocio está separada en servicios:
-- `UserService`: Gestión de usuarios
-- `AuthService`: Autenticación y autorización
+### 3. Configurar CORS
+Editar `config/cors.php`:
+```php
+'allowed_origins' => [env('FRONTEND_URL', 'https://tudominio.com')],
+```
 
-### Form Requests
-Validación centralizada:
-- `LoginRequest`: Validación de login con rate limiting
-- `StoreUserRequest`: Validación para crear usuarios
-- `UpdateUserRequest`: Validación para actualizar usuarios
+### 4. Configurar Sanctum
+```env
+SANCTUM_STATEFUL_DOMAINS=tudominio.com
+```
 
-### Policies
-Autorización basada en políticas:
-- `UserPolicy`: Controla quién puede ver, crear, editar y eliminar usuarios
-
-### Eventos y Listeners
-- `UserCreated`: Se dispara al crear un usuario
-- `SendUserCreatedNotification`: Procesa el evento (con queue)
+### 5. Usar HTTPS
+Asegúrate de que tu servidor use HTTPS en producción.
 
 ## 🛠️ Comandos Útiles
 
@@ -155,56 +215,44 @@ Autorización basada en políticas:
 php artisan cache:clear
 php artisan config:clear
 php artisan route:clear
-php artisan view:clear
 
 # Ver rutas
 php artisan route:list
 
-# Ver eventos
-php artisan event:list
+# Crear usuario
+php artisan tinker
 
-# Refrescar base de datos
-php artisan migrate:fresh --seed
-
-# Ejecutar queue worker
-php artisan queue:work
+# Ver logs
+Get-Content storage/logs/laravel.log -Tail 50
 ```
-
-## 📖 Documentación Adicional
-
-Para más detalles sobre las mejoras implementadas, consulta:
-- [MEJORAS_IMPLEMENTADAS.md](MEJORAS_IMPLEMENTADAS.md)
 
 ## 🤝 Contribuir
 
-Las contribuciones son bienvenidas. Por favor:
-
 1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+2. Crea una rama (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -am 'Agregar nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Crea un Pull Request
 
-## 📝 Próximas Mejoras
+## 📝 Licencia
 
-- [ ] Sistema de roles y permisos (Spatie Permission)
-- [ ] API RESTful con API Resources
-- [ ] Verificación de email
-- [ ] Autenticación de dos factores (2FA)
-- [ ] Patrón Repository
-- [ ] Notificaciones por email
-- [ ] Dashboard con estadísticas
+Este proyecto está bajo la Licencia MIT.
 
-## 📄 Licencia
+## 👥 Autores
 
-Este proyecto está bajo la licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
+- Tu Nombre - Desarrollo inicial
 
 ## 🙏 Agradecimientos
 
-- [Laravel](https://laravel.com) - El framework PHP
-- [Bootstrap](https://getbootstrap.com) - Framework CSS
+- Laravel Framework
+- Nifty Admin Template
+- Laravel Sanctum
 - Comunidad de Laravel
+
+## 📞 Soporte
+
+Para soporte, email: tu-email@example.com
 
 ---
 
-Desarrollado con ❤️ usando Laravel
+**Desarrollado con ❤️ usando Laravel 12 + Sanctum + Nifty Template**

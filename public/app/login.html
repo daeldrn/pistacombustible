@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Mi Aplicación</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=latin" rel="stylesheet" />
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/nifty.css" rel="stylesheet" />
+    <link href="/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="/css/demo/nifty-demo.css" rel="stylesheet" />
+    <link href="/css/custom.css" rel="stylesheet" />
+    <link href="/plugins/pace/pace.min.css" rel="stylesheet" />
+    <script src="/plugins/pace/pace.min.js"></script>
+</head>
+
+<body>
+    <div id="container" class="cls-container">
+        <div id="bg-overlay" class="bg-img img-balloon"></div>
+
+        <div class="cls-header cls-header-lg">
+            <div class="cls-brand">
+                <a class="box-inline" href="/app/login.html">
+                    <span class="brand-title">Mi Aplicación <span class="text-thin">Portal</span></span>
+                </a>
+            </div>
+        </div>
+
+        <div class="cls-content">
+            <div class="cls-content-sm panel rounded">
+                <div class="panel-body">
+                    <p class="pad-btm">Acceso al portal</p>
+
+                    <div class="alert alert-danger" id="errorMessage" style="display: none;">
+                        <ul style="margin: 0; padding-left: 20px;" id="errorList"></ul>
+                    </div>
+
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-user"></i>
+                                </div>
+                                <input id="email" name="email" type="email" class="form-control" placeholder="Email"
+                                    required autofocus />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-asterisk"></i>
+                                </div>
+                                <input id="password" name="password" type="password" class="form-control"
+                                    placeholder="Contraseña" required />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-8 text-left checkbox">
+                                <label class="form-checkbox form-icon">
+                                    <input type="checkbox" name="remember" id="remember"> Recuérdame
+                                </label>
+                            </div>
+                            <div class="col-xs-4">
+                                <div class="form-group text-right">
+                                    <button type="submit" class="btn btn-success text-uppercase rounded" id="loginBtn">
+                                        Entrar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/jquery-2.1.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/plugins/fast-click/fastclick.min.js"></script>
+    <script src="/js/nifty.js"></script>
+    <script>
+        const API_URL = '/api';
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            const errorList = document.getElementById('errorList');
+
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Entrando...';
+            errorMessage.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.token) {
+                    localStorage.setItem('auth_token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    window.location.href = '/app/dashboard.html';
+                } else {
+                    errorList.innerHTML = '<li>' + (data.message || 'Error al iniciar sesión') + '</li>';
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorList.innerHTML = '<li>Error de conexión. Por favor intente nuevamente.</li>';
+                errorMessage.style.display = 'block';
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Entrar';
+            }
+        });
+    </script>
+</body>
+
+</html>

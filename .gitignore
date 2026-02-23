@@ -16,3 +16,15 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# Documentación temporal (ignorar)
+SOLUCION_ERROR_*.md
+AUDITORIA_*.md
+RESUMEN_CAMBIOS.md
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
