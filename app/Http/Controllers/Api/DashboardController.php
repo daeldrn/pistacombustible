@@ -3,11 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Http\Resources\UserResource;
+use App\Http\Responses\ApiResponse;
+use App\Repositories\UserRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
+    protected UserRepository $userRepository;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
     /**
      * Get dashboard statistics
      *
@@ -15,19 +25,19 @@ class DashboardController extends Controller
      */
     public function stats(): JsonResponse
     {
-        $stats = [
-            'users' => User::count(),
-            'active_users' => User::where('activo', true)->count(),
-            'inactive_users' => User::where('activo', false)->count(),
-            'orders' => 89, // Ejemplo - reemplazar con datos reales
-            'sales' => 234, // Ejemplo - reemplazar con datos reales
-            'messages' => 45, // Ejemplo - reemplazar con datos reales
-        ];
+        // Cache por 5 minutos (300 segundos)
+        $stats = Cache::remember('dashboard.stats', 300, function () {
+            return [
+                'users' => $this->userRepository->count(),
+                'active_users' => $this->userRepository->countActive(),
+                'inactive_users' => $this->userRepository->countInactive(),
+                'orders' => 89, // Ejemplo - reemplazar con datos reales
+                'sales' => 234, // Ejemplo - reemplazar con datos reales
+                'messages' => 45, // Ejemplo - reemplazar con datos reales
+            ];
+        });
 
-        return response()->json([
-            'success' => true,
-            'data' => $stats
-        ], 200);
+        return ApiResponse::success($stats, 'Estadísticas obtenidas exitosamente');
     }
 
     /**
@@ -37,12 +47,15 @@ class DashboardController extends Controller
      */
     public function recentUsers(): JsonResponse
     {
-        $users = User::latest()->take(10)->get();
+        // Cache por 2 minutos (120 segundos)
+        $users = Cache::remember('dashboard.recent_users', 120, function () {
+            return $this->userRepository->getRecent(10);
+        });
 
-        return response()->json([
-            'success' => true,
-            'data' => $users
-        ], 200);
+        return ApiResponse::success(
+            UserResource::collection($users),
+            'Usuarios recientes obtenidos exitosamente'
+        );
     }
 
     /**
@@ -52,23 +65,25 @@ class DashboardController extends Controller
      */
     public function index(): JsonResponse
     {
-        $stats = [
-            'users' => User::count(),
-            'active_users' => User::where('activo', true)->count(),
-            'inactive_users' => User::where('activo', false)->count(),
-            'orders' => 89,
-            'sales' => 234,
-            'messages' => 45,
-        ];
+        // Cache por 5 minutos
+        $dashboardData = Cache::remember('dashboard.all', 300, function () {
+            $stats = [
+                'users' => $this->userRepository->count(),
+                'active_users' => $this->userRepository->countActive(),
+                'inactive_users' => $this->userRepository->countInactive(),
+                'orders' => 89,
+                'sales' => 234,
+                'messages' => 45,
+            ];
 
-        $recentUsers = User::latest()->take(10)->get();
+            $recentUsers = $this->userRepository->getRecent(10);
 
-        return response()->json([
-            'success' => true,
-            'data' => [
+            return [
                 'stats' => $stats,
-                'recent_users' => $recentUsers
-            ]
-        ], 200);
+                'recent_users' => UserResource::collection($recentUsers),
+            ];
+        });
+
+        return ApiResponse::success($dashboardData, 'Dashboard obtenido exitosamente');
     }
 }

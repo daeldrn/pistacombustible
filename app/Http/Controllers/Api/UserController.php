@@ -5,7 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\UserCollection;
+use App\Http\Resources\UserResource;
+use App\Http\Responses\ApiResponse;
 use App\Models\User;
+use App\Repositories\UserRepository;
 use App\Services\UserService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
@@ -15,11 +19,13 @@ class UserController extends Controller
 {
     use AuthorizesRequests;
     
-    protected $userService;
+    protected UserService $userService;
+    protected UserRepository $userRepository;
 
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService, UserRepository $userRepository)
     {
         $this->userService = $userService;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -31,20 +37,12 @@ class UserController extends Controller
     public function index(Request $request): JsonResponse
     {
         $perPage = $request->input('per_page', 10);
-        $users = User::paginate($perPage);
+        $users = $this->userRepository->paginate($perPage);
 
-        return response()->json([
-            'success' => true,
-            'data' => $users->items(),
-            'pagination' => [
-                'total' => $users->total(),
-                'per_page' => $users->perPage(),
-                'current_page' => $users->currentPage(),
-                'last_page' => $users->lastPage(),
-                'from' => $users->firstItem(),
-                'to' => $users->lastItem(),
-            ]
-        ], 200);
+        return ApiResponse::success(
+            new UserCollection($users),
+            'Lista de usuarios obtenida exitosamente'
+        );
     }
 
     /**
@@ -58,17 +56,12 @@ class UserController extends Controller
         try {
             $user = $this->userService->createUser($request->validated());
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Usuario creado exitosamente',
-                'data' => $user
-            ], 201);
+            return ApiResponse::created(
+                UserResource::make($user),
+                'Usuario creado exitosamente'
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al crear el usuario',
-                'error' => $e->getMessage()
-            ], 500);
+            return ApiResponse::serverError('Error al crear el usuario');
         }
     }
 
@@ -80,10 +73,10 @@ class UserController extends Controller
      */
     public function show(User $user): JsonResponse
     {
-        return response()->json([
-            'success' => true,
-            'data' => $user
-        ], 200);
+        return ApiResponse::success(
+            UserResource::make($user),
+            'Usuario obtenido exitosamente'
+        );
     }
 
     /**
@@ -100,22 +93,14 @@ class UserController extends Controller
             
             $user = $this->userService->updateUser($user, $request->validated());
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Usuario actualizado exitosamente',
-                'data' => $user
-            ], 200);
+            return ApiResponse::success(
+                UserResource::make($user),
+                'Usuario actualizado exitosamente'
+            );
         } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No autorizado para realizar esta acción'
-            ], 403);
+            return ApiResponse::forbidden('No autorizado para realizar esta acción');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al actualizar el usuario',
-                'error' => $e->getMessage()
-            ], 500);
+            return ApiResponse::serverError('Error al actualizar el usuario');
         }
     }
 
@@ -132,21 +117,11 @@ class UserController extends Controller
             
             $this->userService->deleteUser($user);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Usuario eliminado exitosamente'
-            ], 200);
+            return ApiResponse::success(null, 'Usuario eliminado exitosamente');
         } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No autorizado para realizar esta acción'
-            ], 403);
+            return ApiResponse::forbidden('No autorizado para realizar esta acción');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al eliminar el usuario',
-                'error' => $e->getMessage()
-            ], 500);
+            return ApiResponse::serverError('Error al eliminar el usuario');
         }
     }
 }

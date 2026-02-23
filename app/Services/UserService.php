@@ -3,11 +3,19 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class UserService
 {
+    protected UserRepository $userRepository;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
     /**
      * Create a new user.
      *
@@ -17,14 +25,22 @@ class UserService
     public function createUser(array $data): User
     {
         try {
-            $user = User::create([
+            $user = $this->userRepository->create([
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
                 'activo' => $data['activo'] ?? true,
             ]);
 
-            Log::info('Usuario creado exitosamente', ['user_id' => $user->id, 'email' => $user->email]);
+            Log::info('Usuario creado exitosamente', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'ip' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+            ]);
+
+            // Limpiar caché del dashboard
+            $this->clearDashboardCache();
 
             // Disparar evento
             event(new \App\Events\UserCreated($user));
@@ -33,7 +49,8 @@ class UserService
         } catch (\Exception $e) {
             Log::error('Error al crear usuario', [
                 'error' => $e->getMessage(),
-                'data' => $data
+                'data' => $data,
+                'ip' => request()->ip(),
             ]);
             throw $e;
         }
@@ -49,23 +66,33 @@ class UserService
     public function updateUser(User $user, array $data): User
     {
         try {
-            $user->name = $data['name'];
-            $user->email = $data['email'];
-            $user->activo = $data['activo'] ?? false;
+            $updateData = [
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'activo' => $data['activo'] ?? false,
+            ];
 
             if (!empty($data['password'])) {
-                $user->password = Hash::make($data['password']);
+                $updateData['password'] = Hash::make($data['password']);
             }
 
-            $user->save();
+            $this->userRepository->update($user, $updateData);
 
-            Log::info('Usuario actualizado exitosamente', ['user_id' => $user->id]);
+            Log::info('Usuario actualizado exitosamente', [
+                'user_id' => $user->id,
+                'ip' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+            ]);
 
-            return $user;
+            // Limpiar caché del dashboard
+            $this->clearDashboardCache();
+
+            return $user->fresh();
         } catch (\Exception $e) {
             Log::error('Error al actualizar usuario', [
                 'user_id' => $user->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'ip' => request()->ip(),
             ]);
             throw $e;
         }
@@ -81,17 +108,37 @@ class UserService
     {
         try {
             $userId = $user->id;
-            $user->delete();
+            $this->userRepository->delete($user);
 
-            Log::info('Usuario eliminado exitosamente', ['user_id' => $userId]);
+            Log::info('Usuario eliminado exitosamente', [
+                'user_id' => $userId,
+                'ip' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+            ]);
+
+            // Limpiar caché del dashboard
+            $this->clearDashboardCache();
 
             return true;
         } catch (\Exception $e) {
             Log::error('Error al eliminar usuario', [
                 'user_id' => $user->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'ip' => request()->ip(),
             ]);
             throw $e;
         }
+    }
+
+    /**
+     * Clear dashboard cache.
+     *
+     * @return void
+     */
+    protected function clearDashboardCache(): void
+    {
+        \Illuminate\Support\Facades\Cache::forget('dashboard.stats');
+        \Illuminate\Support\Facades\Cache::forget('dashboard.recent_users');
+        \Illuminate\Support\Facades\Cache::forget('dashboard.all');
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
+use App\Http\Resources\UserResource;
+use App\Http\Responses\ApiResponse;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,7 +14,7 @@ use Illuminate\Support\Facades\RateLimiter;
 
 class AuthController extends Controller
 {
-    protected $authService;
+    protected AuthService $authService;
 
     public function __construct(AuthService $authService)
     {
@@ -44,25 +46,15 @@ class AuthController extends Controller
             
             RateLimiter::clear($request->throttleKey());
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Login exitoso',
+            return ApiResponse::success([
                 'token' => $token,
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'activo' => $user->activo,
-                ]
-            ], 200);
+                'user' => UserResource::make($user),
+            ], 'Login exitoso');
         }
 
         RateLimiter::hit($request->throttleKey());
 
-        return response()->json([
-            'success' => false,
-            'message' => $result['message'],
-        ], 401);
+        return ApiResponse::unauthorized($result['message']);
     }
 
     /**
@@ -76,10 +68,7 @@ class AuthController extends Controller
         // Revocar el token actual
         $request->user()->currentAccessToken()->delete();
         
-        return response()->json([
-            'success' => true,
-            'message' => 'Logout exitoso'
-        ], 200);
+        return ApiResponse::success(null, 'Logout exitoso');
     }
 
     /**
@@ -90,9 +79,9 @@ class AuthController extends Controller
      */
     public function me(Request $request): JsonResponse
     {
-        return response()->json([
-            'success' => true,
-            'user' => $request->user()
-        ], 200);
+        return ApiResponse::success(
+            UserResource::make($request->user()),
+            'Usuario autenticado'
+        );
     }
 }
