@@ -33,11 +33,12 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
 
-        // API middleware group
+        // API middleware group with throttling
         $middleware->api(prepend: [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            'throttle:api',
         ]);
+        
+        $middleware->throttleApi();
 
         // Route middleware aliases
         $middleware->alias([
@@ -56,4 +57,9 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
-    })->create();
+    })
+    ->withProviders([
+        \App\Providers\AppServiceProvider::class,
+        \App\Providers\EventServiceProvider::class,
+    ])
+    ->create();
