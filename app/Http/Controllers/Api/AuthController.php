@@ -37,6 +37,7 @@ class AuthController extends Controller
 
         if ($result['success']) {
             $user = Auth::user();
+            $user->load(['roles', 'permissions']);
             
             // Revocar tokens anteriores (opcional)
             // $user->tokens()->delete();
@@ -79,8 +80,11 @@ class AuthController extends Controller
      */
     public function me(Request $request): JsonResponse
     {
+        $user = $request->user();
+        $user->load(['roles', 'permissions']);
+        
         return ApiResponse::success(
-            UserResource::make($request->user()),
+            UserResource::make($user),
             'Usuario autenticado'
         );
     }

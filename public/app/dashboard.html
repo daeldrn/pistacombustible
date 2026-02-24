@@ -178,24 +178,20 @@
                                         </a>
                                     </li>
 
+                                    <li class="list-divider"></li>
+                                    <li class="list-header">Administración</li>
+
                                     <li>
-                                        <a href="#">
-                                            <i class="fa fa-shopping-cart"></i>
-                                            <span class="menu-title">Pedidos</span>
+                                        <a href="/app/roles.html">
+                                            <i class="fa fa-shield"></i>
+                                            <span class="menu-title">Roles</span>
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a href="#">
-                                            <i class="fa fa-file-text"></i>
-                                            <span class="menu-title">Reportes</span>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="#">
-                                            <i class="fa fa-cog"></i>
-                                            <span class="menu-title">Configuración</span>
+                                        <a href="/app/permissions.html">
+                                            <i class="fa fa-key"></i>
+                                            <span class="menu-title">Permisos</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -218,51 +214,8 @@
     <script src="/js/bootstrap.min.js"></script>
     <script src="/plugins/fast-click/fastclick.min.js"></script>
     <script src="/js/nifty.js"></script>
+    <script src="/js/app-common.js"></script>
     <script>
-        const API_URL = '/pista';
-
-        // Verificar autenticación
-        function checkAuth() {
-            const token = localStorage.getItem('auth_token');
-            if (!token) {
-                window.location.href = '/app/login.html';
-                return null;
-            }
-            return token;
-        }
-
-        // Hacer petición autenticada
-        async function fetchAPI(endpoint, options = {}) {
-            const token = checkAuth();
-            if (!token) return;
-
-            const headers = {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${token}`,
-                ...options.headers
-            };
-
-            try {
-                const response = await fetch(`${API_URL}${endpoint}`, {
-                    ...options,
-                    headers
-                });
-
-                if (response.status === 401) {
-                    localStorage.removeItem('auth_token');
-                    localStorage.removeItem('user');
-                    window.location.href = '/app/login.html';
-                    return null;
-                }
-
-                return await response.json();
-            } catch (error) {
-                console.error('Error:', error);
-                return null;
-            }
-        }
-
         // Cargar datos del dashboard
         async function loadDashboard() {
             const data = await fetchAPI('/dashboard');
@@ -299,28 +252,10 @@
             }
         }
 
-        // Mostrar nombre de usuario
-        function displayUserName() {
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            if (user.name) {
-                document.getElementById('userName').textContent = user.name;
-            }
-        }
-
-        // Logout
-        document.getElementById('logoutBtn').addEventListener('click', async (e) => {
-            e.preventDefault();
-
-            await fetchAPI('/logout', { method: 'POST' });
-
-            localStorage.removeItem('auth_token');
-            localStorage.removeItem('user');
-            window.location.href = '/app/login.html';
-        });
-
         // Inicializar
         checkAuth();
         displayUserName();
+        applyMenuPermissions();
         loadDashboard();
     </script>
 </body>

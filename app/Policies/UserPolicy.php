@@ -40,8 +40,12 @@ class UserPolicy
      */
     public function update(User $user, User $model): Response
     {
+        // Los usuarios con permiso 'edit users' pueden editar cualquier usuario
+        if ($user->can('edit users')) {
+            return Response::allow();
+        }
+        
         // Los usuarios pueden actualizar su propio perfil
-        // En producción, agregar lógica para roles de administrador
         return $user->id === $model->id
             ? Response::allow()
             : Response::deny('No tienes permiso para editar este usuario.');
@@ -52,11 +56,15 @@ class UserPolicy
      */
     public function delete(User $user, User $model): Response
     {
-        // Los usuarios no pueden eliminarse a sí mismos
-        // En producción, solo administradores deberían poder eliminar
-        return $user->id !== $model->id
-            ? Response::allow()
-            : Response::deny('No puedes eliminar tu propia cuenta.');
+        // Los usuarios con permiso 'delete users' pueden eliminar usuarios
+        if ($user->can('delete users')) {
+            // Pero no pueden eliminarse a sí mismos
+            return $user->id !== $model->id
+                ? Response::allow()
+                : Response::deny('No puedes eliminar tu propia cuenta.');
+        }
+        
+        return Response::deny('No tienes permiso para eliminar usuarios.');
     }
 
     /**

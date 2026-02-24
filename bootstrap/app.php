@@ -28,6 +28,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'can' => \Illuminate\Auth\Middleware\Authorize::class,
             'signed' => \App\Http\Middleware\ValidateSignature::class,
             'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
@@ -62,6 +65,13 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($e instanceof \Illuminate\Auth\Access\AuthorizationException) {
                     return \App\Http\Responses\ApiResponse::forbidden(
                         $e->getMessage() ?: 'No tiene permisos para realizar esta acción'
+                    );
+                }
+
+                // Spatie Permission - No autorizado
+                if ($e instanceof \Spatie\Permission\Exceptions\UnauthorizedException) {
+                    return \App\Http\Responses\ApiResponse::forbidden(
+                        'No tiene permisos para realizar esta acción'
                     );
                 }
 

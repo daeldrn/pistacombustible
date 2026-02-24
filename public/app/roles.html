@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roles - Mi Aplicación</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=latin" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/custom.css" rel="stylesheet" />
+    <link href="/css/nifty.css" rel="stylesheet">
+    <link href="/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/plugins/animate-css/animate.min.css" rel="stylesheet">
+    <link href="/css/demo/nifty-demo.css" rel="stylesheet">
+    <link href="/plugins/pace/pace.min.css" rel="stylesheet">
+    <script src="/plugins/pace/pace.min.js"></script>
+</head>
+
+<body>
+    <div id="container" class="effect mainnav-lg">
+
+        <!--NAVBAR-->
+        <header id="navbar">
+            <div id="navbar-container" class="boxed">
+                <div class="navbar-header">
+                    <a href="/app/dashboard.html" class="navbar-brand">
+                        <img src="/img/logo.png" alt="Logo" class="brand-icon">
+                        <div class="brand-title">
+                            <span class="brand-text">Mi Aplicación</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="navbar-content clearfix">
+                    <ul class="nav navbar-top-links pull-left">
+                        <li class="tgl-menu-btn">
+                            <a class="mainnav-toggle" href="javascript:void(0);">
+                                <i class="fa fa-navicon fa-lg"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-top-links pull-right">
+                        <li id="dropdown-user" class="dropdown">
+                            <a href="#" data-toggle="dropdown" class="dropdown-toggle text-right">
+                                <span class="pull-right">
+                                    <img class="img-circle img-user media-object" src="/img/av1.png"
+                                        alt="Profile Picture">
+                                </span>
+                                <div class="username hidden-xs" id="userName">Usuario</div>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-md dropdown-menu-right panel-default">
+                                <ul class="head-list">
+                                    <li>
+                                        <a href="#"><i class="fa fa-user fa-fw"></i> Perfil</a>
+                                    </li>
+                                    <li>
+                                        <a href="#"><i class="fa fa-cog fa-fw"></i> Configuración</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" id="logoutBtn"><i class="fa fa-sign-out fa-fw"></i> Cerrar
+                                            Sesión</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <div class="boxed">
+            <div id="content-container">
+                <div id="page-title">
+                    <h1 class="page-header text-overflow">Gestión de Roles</h1>
+                </div>
+
+                <div id="page-content">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel">
+                                <div class="panel-heading">
+                                    <div class="panel-control">
+                                        <button class="btn btn-primary" data-toggle="modal"
+                                            data-target="#createRoleModal">
+                                            <i class="fa fa-plus"></i> Nuevo Rol
+                                        </button>
+                                    </div>
+                                    <h3 class="panel-title">Lista de Roles</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Nombre</th>
+                                                <th>Permisos</th>
+                                                <th>Fecha Creación</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rolesTable">
+                                            <tr>
+                                                <td colspan="5" class="text-center">Cargando...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!--MAIN NAVIGATION-->
+            <nav id="mainnav-container">
+                <div id="mainnav">
+                    <div id="mainnav-menu-wrap">
+                        <div class="nano">
+                            <div class="nano-content">
+                                <ul id="mainnav-menu" class="list-group">
+                                    <li class="list-header">Navegación</li>
+
+                                    <li>
+                                        <a href="/app/dashboard.html">
+                                            <i class="fa fa-dashboard"></i>
+                                            <span class="menu-title">Dashboard</span>
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="/app/users.html">
+                                            <i class="fa fa-users"></i>
+                                            <span class="menu-title">Usuarios</span>
+                                        </a>
+                                    </li>
+
+                                    <li class="list-divider"></li>
+                                    <li class="list-header">Administración</li>
+
+                                    <li class="active-link">
+                                        <a href="/app/roles.html">
+                                            <i class="fa fa-shield"></i>
+                                            <span class="menu-title">Roles</span>
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="/app/permissions.html">
+                                            <i class="fa fa-key"></i>
+                                            <span class="menu-title">Permisos</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <footer id="footer">
+            <div class="hide-fixed pull-right pad-rgt"></div>
+            <p class="pad-lft">&#0169; 2026 Mi Aplicación</p>
+        </footer>
+
+        <button id="scroll-top" class="btn"><i class="fa fa-chevron-up"></i></button>
+    </div>
+
+    <!-- Modal Crear Rol -->
+    <div class="modal fade" id="createRoleModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Nuevo Rol</h4>
+                </div>
+                <form id="createRoleForm">
+                    <div class="modal-body">
+                        <div class="alert alert-danger" id="createErrorMessage" style="display: none;"></div>
+
+                        <div class="form-group">
+                            <label>Nombre del Rol</label>
+                            <input type="text" class="form-control" name="name" required
+                                placeholder="Ej: moderator, supervisor">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Permisos</label>
+                            <div id="permissionsList" class="checkbox-list">
+                                <p class="text-muted">Cargando permisos...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Rol -->
+    <div class="modal fade" id="editRoleModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Editar Rol</h4>
+                </div>
+                <form id="editRoleForm">
+                    <input type="hidden" name="role_id" id="editRoleId">
+                    <div class="modal-body">
+                        <div class="alert alert-danger" id="editErrorMessage" style="display: none;"></div>
+
+                        <div class="form-group">
+                            <label>Nombre del Rol</label>
+                            <input type="text" class="form-control" name="name" id="editRoleName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Permisos</label>
+                            <div id="editPermissionsList" class="checkbox-list">
+                                <p class="text-muted">Cargando permisos...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/jquery-2.1.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/plugins/fast-click/fastclick.min.js"></script>
+    <script src="/js/nifty.js"></script>
+    <script src="/js/app-common.js"></script>
+    <script>
+        let allPermissions = [];
+
+        async function loadRoles() {
+            const data = await fetchAPI('/roles');
+
+            if (data && data.success) {
+                const roles = data.data;
+                const tbody = document.getElementById('rolesTable');
+
+                if (roles.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay roles registrados</td></tr>';
+                } else {
+                    tbody.innerHTML = roles.map(role => `
+                        <tr>
+                            <td>${role.id}</td>
+                            <td><strong>${role.name}</strong></td>
+                            <td>
+                                ${role.permissions.map(p =>
+                        `<span class="label label-info">${p.name}</span>`
+                    ).join(' ')}
+                            </td>
+                            <td>${new Date(role.created_at).toLocaleDateString('es-ES')}</td>
+                            <td>
+                                ${hasPermission('edit roles') ? `
+                                <button class="btn btn-sm btn-info" onclick="editRole(${role.id})" title="Editar">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                ` : ''}
+                                ${hasPermission('delete roles') && !['admin', 'user'].includes(role.name) ? `
+                                <button class="btn btn-sm btn-danger" onclick="deleteRole(${role.id}, '${role.name}')" title="Eliminar">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                                ` : ''}
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            }
+        }
+
+        async function loadPermissions() {
+            const data = await fetchAPI('/permissions');
+
+            if (data && data.success) {
+                allPermissions = data.data;
+                renderPermissionsList('permissionsList', []);
+            }
+        }
+
+        function renderPermissionsList(containerId, selectedPermissions = []) {
+            const container = document.getElementById(containerId);
+
+            if (allPermissions.length === 0) {
+                container.innerHTML = '<p class="text-muted">No hay permisos disponibles</p>';
+                return;
+            }
+
+            container.innerHTML = allPermissions.map(permission => `
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="permissions[]" value="${permission.name}" 
+                            ${selectedPermissions.includes(permission.name) ? 'checked' : ''}>
+                        ${permission.name}
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        async function editRole(roleId) {
+            const data = await fetchAPI(`/roles/${roleId}`);
+
+            if (data && data.success) {
+                const role = data.data;
+                document.getElementById('editRoleId').value = role.id;
+                document.getElementById('editRoleName').value = role.name;
+
+                const selectedPermissions = role.permissions.map(p => p.name);
+                renderPermissionsList('editPermissionsList', selectedPermissions);
+
+                $('#editRoleModal').modal('show');
+            }
+        }
+
+        async function deleteRole(id, name) {
+            if (!confirm(`¿Está seguro de eliminar el rol "${name}"?`)) return;
+
+            const data = await fetchAPI(`/roles/${id}`, { method: 'DELETE' });
+
+            if (data && data.success) {
+                showNotification('Rol eliminado exitosamente', 'success');
+                loadRoles();
+            } else {
+                showNotification(data.message || 'Error al eliminar rol', 'danger');
+            }
+        }
+
+        document.getElementById('createRoleForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const permissions = Array.from(formData.getAll('permissions[]'));
+
+            const roleData = {
+                name: formData.get('name'),
+                permissions: permissions
+            };
+
+            const data = await fetchAPI('/roles', {
+                method: 'POST',
+                body: JSON.stringify(roleData)
+            });
+
+            if (data && data.success) {
+                $('#createRoleModal').modal('hide');
+                e.target.reset();
+                showNotification('Rol creado exitosamente', 'success');
+                loadRoles();
+            } else {
+                document.getElementById('createErrorMessage').textContent = data.message || 'Error al crear rol';
+                document.getElementById('createErrorMessage').style.display = 'block';
+            }
+        });
+
+        document.getElementById('editRoleForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const roleId = formData.get('role_id');
+            const permissions = Array.from(formData.getAll('permissions[]'));
+
+            const roleData = {
+                name: formData.get('name'),
+                permissions: permissions
+            };
+
+            const data = await fetchAPI(`/roles/${roleId}`, {
+                method: 'PUT',
+                body: JSON.stringify(roleData)
+            });
+
+            if (data && data.success) {
+                $('#editRoleModal').modal('hide');
+                showNotification('Rol actualizado exitosamente', 'success');
+                loadRoles();
+            } else {
+                document.getElementById('editErrorMessage').textContent = data.message || 'Error al actualizar rol';
+                document.getElementById('editErrorMessage').style.display = 'block';
+            }
+        });
+
+        function showNotification(message, type = 'info') {
+            const alertClass = `alert-${type}`;
+            const alert = $(`
+                <div class="alert ${alertClass} alert-dismissible fade in" role="alert" 
+                    style="position: fixed; top: 70px; right: 20px; z-index: 9999; min-width: 300px;">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    ${message}
+                </div>
+            `);
+
+            $('body').append(alert);
+            setTimeout(() => alert.alert('close'), 3000);
+        }
+
+        checkAuth();
+        displayUserName();
+        applyMenuPermissions();
+
+        // Verificar permiso para ver roles
+        if (!hasPermission('view roles')) {
+            document.getElementById('page-content').innerHTML = `
+                <div class="alert alert-danger">
+                    <h4><i class="fa fa-ban"></i> Acceso Denegado</h4>
+                    <p>No tienes permisos para ver esta página.</p>
+                    <a href="/app/dashboard.html" class="btn btn-primary">Volver al Dashboard</a>
+                </div>
+            `;
+        } else {
+            loadRoles();
+            loadPermissions();
+
+            // Ocultar botón de crear si no tiene permiso
+            if (!hasPermission('create roles')) {
+                document.querySelector('[data-target="#createRoleModal"]').style.display = 'none';
+            }
+        }
+
+        $('#createRoleModal').on('show.bs.modal', function () {
+            renderPermissionsList('permissionsList', []);
+        });
+    </script>
+</body>
+
+</html>

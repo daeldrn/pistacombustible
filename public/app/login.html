@@ -108,9 +108,9 @@
 
                 const data = await response.json();
 
-                if (data.success && data.token) {
-                    localStorage.setItem('auth_token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
+                if (data.success && data.data.token) {
+                    localStorage.setItem('auth_token', data.data.token);
+                    localStorage.setItem('user', JSON.stringify(data.data.user));
                     window.location.href = '/app/dashboard.html';
                 } else {
                     errorList.innerHTML = '<li>' + (data.message || 'Error al iniciar sesión') + '</li>';

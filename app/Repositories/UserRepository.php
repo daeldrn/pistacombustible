@@ -16,7 +16,7 @@ class UserRepository
      */
     public function paginate(int $perPage = 10): LengthAwarePaginator
     {
-        return User::paginate($perPage);
+        return User::with(['roles', 'permissions'])->paginate($perPage);
     }
 
     /**

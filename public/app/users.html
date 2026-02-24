@@ -97,6 +97,7 @@
                                                 <th>#</th>
                                                 <th>Nombre</th>
                                                 <th>Email</th>
+                                                <th>Roles</th>
                                                 <th>Estado</th>
                                                 <th>Fecha Registro</th>
                                                 <th>Acciones</th>
@@ -104,7 +105,7 @@
                                         </thead>
                                         <tbody id="usersTable">
                                             <tr>
-                                                <td colspan="6" class="text-center">Cargando...</td>
+                                                <td colspan="7" class="text-center">Cargando...</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -141,24 +142,20 @@
                                         </a>
                                     </li>
 
+                                    <li class="list-divider"></li>
+                                    <li class="list-header">Administración</li>
+
                                     <li>
-                                        <a href="#">
-                                            <i class="fa fa-shopping-cart"></i>
-                                            <span class="menu-title">Pedidos</span>
+                                        <a href="/app/roles.html">
+                                            <i class="fa fa-shield"></i>
+                                            <span class="menu-title">Roles</span>
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a href="#">
-                                            <i class="fa fa-file-text"></i>
-                                            <span class="menu-title">Reportes</span>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="#">
-                                            <i class="fa fa-cog"></i>
-                                            <span class="menu-title">Configuración</span>
+                                        <a href="/app/permissions.html">
+                                            <i class="fa fa-key"></i>
+                                            <span class="menu-title">Permisos</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -220,53 +217,89 @@
         </div>
     </div>
 
+    <!-- Modal Editar Usuario -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Editar Usuario</h4>
+                </div>
+                <form id="editUserForm">
+                    <input type="hidden" name="user_id" id="editUserId">
+                    <div class="modal-body">
+                        <div class="alert alert-danger" id="editErrorMessage" style="display: none;"></div>
+
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" class="form-control" name="name" id="editUserName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" class="form-control" name="email" id="editUserEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Contraseña (dejar en blanco para no cambiar)</label>
+                            <input type="password" class="form-control" name="password">
+                        </div>
+                        <div class="form-group">
+                            <label>Confirmar Contraseña</label>
+                            <input type="password" class="form-control" name="password_confirmation">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-checkbox form-icon">
+                                <input type="checkbox" name="activo" id="editUserActivo"> Usuario Activo
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Asignar Roles -->
+    <div class="modal fade" id="assignRolesModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Asignar Roles</h4>
+                </div>
+                <form id="assignRolesForm">
+                    <input type="hidden" name="user_id" id="assignRolesUserId">
+                    <div class="modal-body">
+                        <div class="alert alert-danger" id="assignRolesErrorMessage" style="display: none;"></div>
+
+                        <p><strong>Usuario:</strong> <span id="assignRolesUserName"></span></p>
+
+                        <div class="form-group">
+                            <label>Roles</label>
+                            <div id="rolesList">
+                                <p class="text-muted">Cargando roles...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="/js/jquery-2.1.1.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/plugins/fast-click/fastclick.min.js"></script>
     <script src="/js/nifty.js"></script>
+    <script src="/js/app-common.js"></script>
     <script>
-        const API_URL = '/pista';
         let currentPage = 1;
-
-        function checkAuth() {
-            const token = localStorage.getItem('auth_token');
-            if (!token) {
-                window.location.href = '/app/login.html';
-                return null;
-            }
-            return token;
-        }
-
-        async function fetchAPI(endpoint, options = {}) {
-            const token = checkAuth();
-            if (!token) return;
-
-            const headers = {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${token}`,
-                ...options.headers
-            };
-
-            try {
-                const response = await fetch(`${API_URL}${endpoint}`, {
-                    ...options,
-                    headers
-                });
-
-                if (response.status === 401) {
-                    localStorage.removeItem('auth_token');
-                    localStorage.removeItem('user');
-                    window.location.href = '/app/login.html';
-                    return null;
-                }
-
-                return await response.json();
-            } catch (error) {
-                console.error('Error:', error);
-                return null;
-            }
-        }
+        let allRoles = [];
 
         async function loadUsers(page = 1) {
             const data = await fetchAPI(`/users?page=${page}&per_page=10`);
@@ -276,7 +309,7 @@
                 const tbody = document.getElementById('usersTable');
 
                 if (users.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay usuarios registrados</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center">No hay usuarios registrados</td></tr>';
                 } else {
                     tbody.innerHTML = users.map(user => `
                         <tr>
@@ -284,34 +317,178 @@
                             <td>${user.name}</td>
                             <td>${user.email}</td>
                             <td>
+                                ${user.roles && user.roles.length > 0
+                            ? user.roles.map(role => `<span class="label label-primary">${role}</span>`).join(' ')
+                            : '<span class="text-muted">Sin rol</span>'}
+                            </td>
+                            <td>
                                 ${user.activo
                             ? '<span class="label label-success">Activo</span>'
                             : '<span class="label label-danger">Inactivo</span>'}
                             </td>
                             <td>${new Date(user.created_at).toLocaleDateString('es-ES')}</td>
                             <td>
+                                ${hasPermission('edit users') ? `
+                                <button class="btn btn-sm btn-warning" onclick="editUser(${user.id})" title="Editar">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                ` : ''}
+                                ${hasPermission('assign roles') ? `
+                                <button class="btn btn-sm btn-info" onclick="assignRoles(${user.id}, '${user.name}')" title="Asignar Roles">
+                                    <i class="fa fa-shield"></i>
+                                </button>
+                                ` : ''}
+                                ${hasPermission('delete users') ? `
                                 <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})" title="Eliminar">
                                     <i class="fa fa-trash"></i>
                                 </button>
+                                ` : ''}
                             </td>
                         </tr>
                     `).join('');
                 }
 
                 // Paginación
-                const pagination = data.pagination;
-                let paginationHTML = '<ul class="pagination">';
+                const meta = data.meta;
+                if (meta && meta.last_page > 1) {
+                    let paginationHTML = '<ul class="pagination">';
 
-                for (let i = 1; i <= pagination.last_page; i++) {
-                    paginationHTML += `<li class="${i === pagination.current_page ? 'active' : ''}">
-                        <a href="#" onclick="loadUsers(${i}); return false;">${i}</a>
-                    </li>`;
+                    for (let i = 1; i <= meta.last_page; i++) {
+                        paginationHTML += `<li class="${i === meta.current_page ? 'active' : ''}">
+                            <a href="#" onclick="loadUsers(${i}); return false;">${i}</a>
+                        </li>`;
+                    }
+
+                    paginationHTML += '</ul>';
+                    document.getElementById('pagination').innerHTML = paginationHTML;
+                } else {
+                    document.getElementById('pagination').innerHTML = '';
                 }
-
-                paginationHTML += '</ul>';
-                document.getElementById('pagination').innerHTML = paginationHTML;
             }
         }
+
+        async function loadRoles() {
+            const data = await fetchAPI('/roles');
+            if (data && data.success) {
+                allRoles = data.data;
+            }
+        }
+
+        async function assignRoles(userId, userName) {
+            document.getElementById('assignRolesUserId').value = userId;
+            document.getElementById('assignRolesUserName').textContent = userName;
+
+            // Obtener roles actuales del usuario
+            const userData = await fetchAPI(`/users/${userId}/permissions`);
+            const currentRoles = userData && userData.success
+                ? userData.data.roles.map(r => r.name)
+                : [];
+
+            // Renderizar lista de roles
+            const rolesList = document.getElementById('rolesList');
+            rolesList.innerHTML = allRoles.map(role => `
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="roles[]" value="${role.name}" 
+                            ${currentRoles.includes(role.name) ? 'checked' : ''}>
+                        ${role.name}
+                    </label>
+                </div>
+            `).join('');
+
+            $('#assignRolesModal').modal('show');
+        }
+
+        async function editUser(userId) {
+            const data = await fetchAPI(`/users/${userId}`);
+
+            if (data && data.success) {
+                const user = data.data;
+
+                // Mostrar el modal primero
+                $('#editUserModal').modal('show');
+
+                // Pequeño delay para asegurar que el DOM esté completamente renderizado
+                setTimeout(() => {
+                    // Resetear el formulario
+                    document.getElementById('editUserForm').reset();
+
+                    // Ocultar mensaje de error
+                    document.getElementById('editErrorMessage').style.display = 'none';
+
+                    // Establecer los valores
+                    document.getElementById('editUserId').value = user.id;
+                    document.getElementById('editUserName').value = user.name;
+                    document.getElementById('editUserEmail').value = user.email;
+
+                    // Establecer el checkbox y forzar el reflow del DOM
+                    const checkbox = document.getElementById('editUserActivo');
+                    checkbox.checked = user.activo;
+
+                    // Forzar reflow del DOM
+                    void checkbox.offsetWidth;
+
+                    // Disparar evento change para asegurar que Bootstrap actualice el estado visual
+                    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+                }, 100);
+            }
+        }
+
+        document.getElementById('assignRolesForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const userId = formData.get('user_id');
+            const roles = Array.from(formData.getAll('roles[]'));
+
+            const data = await fetchAPI(`/users/${userId}/roles`, {
+                method: 'POST',
+                body: JSON.stringify({ roles })
+            });
+
+            if (data && data.success) {
+                $('#assignRolesModal').modal('hide');
+                showNotification('Roles asignados exitosamente', 'success');
+                loadUsers(currentPage);
+            } else {
+                document.getElementById('assignRolesErrorMessage').textContent = data.message || 'Error al asignar roles';
+                document.getElementById('assignRolesErrorMessage').style.display = 'block';
+            }
+        });
+
+        document.getElementById('editUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const userId = formData.get('user_id');
+
+            const userData = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                activo: formData.get('activo') ? true : false
+            };
+
+            // Solo incluir password si se proporcionó
+            const password = formData.get('password');
+            if (password) {
+                userData.password = password;
+                userData.password_confirmation = formData.get('password_confirmation');
+            }
+
+            const data = await fetchAPI(`/users/${userId}`, {
+                method: 'PUT',
+                body: JSON.stringify(userData)
+            });
+
+            if (data && data.success) {
+                $('#editUserModal').modal('hide');
+                showNotification('Usuario actualizado exitosamente', 'success');
+                loadUsers(currentPage);
+            } else {
+                document.getElementById('editErrorMessage').textContent = data.message || 'Error al actualizar usuario';
+                document.getElementById('editErrorMessage').style.display = 'block';
+            }
+        });
 
         async function deleteUser(id) {
             if (!confirm('¿Está seguro de eliminar este usuario?')) return;
@@ -319,10 +496,10 @@
             const data = await fetchAPI(`/users/${id}`, { method: 'DELETE' });
 
             if (data && data.success) {
-                alert('Usuario eliminado exitosamente');
+                showNotification('Usuario eliminado exitosamente', 'success');
                 loadUsers(currentPage);
             } else {
-                alert('Error al eliminar usuario');
+                showNotification('Error al eliminar usuario', 'danger');
             }
         }
 
@@ -346,7 +523,7 @@
             if (data && data.success) {
                 $('#createUserModal').modal('hide');
                 e.target.reset();
-                alert('Usuario creado exitosamente');
+                showNotification('Usuario creado exitosamente', 'success');
                 loadUsers(currentPage);
             } else {
                 document.getElementById('createErrorMessage').textContent = data.message || 'Error al crear usuario';
@@ -354,24 +531,42 @@
             }
         });
 
-        function displayUserName() {
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            if (user.name) {
-                document.getElementById('userName').textContent = user.name;
-            }
-        }
+        function showNotification(message, type = 'info') {
+            const alertClass = `alert-${type}`;
+            const alert = $(`
+                <div class="alert ${alertClass} alert-dismissible fade in" role="alert" 
+                    style="position: fixed; top: 70px; right: 20px; z-index: 9999; min-width: 300px;">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    ${message}
+                </div>
+            `);
 
-        document.getElementById('logoutBtn').addEventListener('click', async (e) => {
-            e.preventDefault();
-            await fetchAPI('/logout', { method: 'POST' });
-            localStorage.removeItem('auth_token');
-            localStorage.removeItem('user');
-            window.location.href = '/app/login.html';
-        });
+            $('body').append(alert);
+            setTimeout(() => alert.alert('close'), 3000);
+        }
 
         checkAuth();
         displayUserName();
-        loadUsers();
+        applyMenuPermissions();
+
+        // Verificar permiso para ver usuarios
+        if (!hasPermission('view users')) {
+            document.getElementById('page-content').innerHTML = `
+                <div class="alert alert-danger">
+                    <h4><i class="fa fa-ban"></i> Acceso Denegado</h4>
+                    <p>No tienes permisos para ver esta página.</p>
+                    <a href="/app/dashboard.html" class="btn btn-primary">Volver al Dashboard</a>
+                </div>
+            `;
+        } else {
+            loadUsers();
+            loadRoles();
+
+            // Ocultar botón de crear si no tiene permiso
+            if (!hasPermission('create users')) {
+                document.querySelector('[data-target="#createUserModal"]').style.display = 'none';
+            }
+        }
     </script>
 </body>
 
